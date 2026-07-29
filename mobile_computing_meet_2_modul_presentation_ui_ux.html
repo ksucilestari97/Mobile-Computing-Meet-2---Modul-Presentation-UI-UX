@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FS313 Mobile Computing Pertemuan 2 - UI/UX Design &amp; Design Thinking | Raharja</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#1e1b4b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .slide-deck-wrapper {
+            position: relative;
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #0f172a 80%);
+        }
+
+        /* Slide Frame Container */
+        .slide-card {
+            width: 1280px;
+            max-width: 96vw;
+            min-height: 680px;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            padding: 28px 36px;
+            animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide-card.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.98) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Top Progress Gradient Bar */
+        .top-gradient-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #4f46e5, #06b6d4, #10b981);
+            z-index: 20;
+        }
+
+        /* Scrollbar styles inside slide content */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.6);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="select-none text-slate-100">
+
+<div class="slide-deck-wrapper p-3 sm:p-5">
+
+    <!-- TOP HEADER CONTROL BAR -->
+    <header class="w-full max-w-[1280px] flex items-center justify-between text-white py-2.5 px-4 sm:px-6 bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-800 shadow-xl z-30 mb-3">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-sm text-white shadow-md">
+                FS
+            </div>
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-white font-heading">Mobile Computing (FS313)</span>
+                    <span class="bg-indigo-500/20 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded border border-indigo-500/30">Meet 2</span>
+                </div>
+                <p class="text-[11px] text-slate-400 hidden sm:block">Dosen &amp; Founder: Karunia Suci Lestari, S. Kom., M. TI. &bull; The Sign.Co / Universitas Raharja</p>
+            </div>
+        </div>
+        
+        <!-- Navigation Controls -->
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                <span class="text-xs text-slate-300 font-mono">Slide <span id="current-slide-num" class="text-indigo-400 font-bold">1</span> / <span id="total-slides-num">12</span></span>
+                <div class="w-20 bg-slate-700 h-2 rounded-full overflow-hidden hidden md:block">
+                    <div id="progress-bar-inner" class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full transition-all duration-300" style="width: 8.33%;"></div>
+                </div>
+            </div>
+
+            <button onclick="toggleTocModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 transition flex items-center space-x-1.5" title="Daftar Isi Slide">
+                <i class="fa-solid fa-list-ul"></i>
+                <span class="hidden sm:inline">Daftar Slide</span>
+            </button>
+
+            <button onclick="toggleQuizModal()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl transition flex items-center space-x-1.5 font-bold shadow-md shadow-emerald-900/20" title="Uji Pemahaman Tes Formatif 10 Soal">
+                <i class="fa-solid fa-clipboard-question"></i>
+                <span class="hidden sm:inline">Tes Formatif (10 Soal)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN SLIDE DISPLAY AREA -->
+    <main class="flex-1 flex items-center justify-center w-full my-auto py-1">
+
+        <!-- ================= SLIDE 1: COVER & PROFILE DOSEN ================= -->
+        <div class="slide-card active" id="slide-1">
+            <div class="top-gradient-bar"></div>
+            <div class="flex flex-col justify-between h-full">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-700 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-indigo-100">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>Bahan Ajar Mobile Computing 2025 &bull; Pertemuan 2</span>
+                        </span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Universitas Raharja</span>
+                    </div>
+
+                    <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight font-heading mb-4">
+                        Konsep UI/UX, Prinsip Desain Modern,<br>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500">Framework &amp; Design Thinking Mobile</span>
+                    </h1>
+                    <p class="text-sm md:text-base text-slate-600 max-w-3xl leading-relaxed mb-6">
+                        Fondasi komprehensif perancangan antarmuka visual (User Interface) dan pengelolaan pengalaman pengguna (User Experience) berpendekatan *User-Centered Design* sebelum tahap wireframing &amp; prototyping di Figma.
+                    </p>
+                </div>
+
+                <!-- Profile Card & Quick Info Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 pt-4 border-t border-slate-100">
+                    <!-- Lecturer Profile -->
+                    <div class="md:col-span-6 bg-gradient-to-br from-slate-50 to-indigo-50/50 p-4 rounded-2xl border border-indigo-100/80 flex items-center space-x-4">
+                        <img src="https://scholar.googleusercontent.com/citations?view_op=view_photo&user=zxQ6BcAAAAAJ&citpid=7" 
+                             alt="Karunia Suci Lestari" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/120x120/4f46e5/ffffff?text=KSL';" 
+                             class="w-20 h-20 rounded-full object-cover border-4 border-indigo-500/30 shadow-md">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 font-heading">Karunia Suci Lestari, S. Kom., M. TI.</h3>
+                            <p class="text-xs text-indigo-700 font-bold">Dosen &amp; Founder</p>
+                            <p class="text-xs text-slate-600 font-medium mb-2">The Sign.Co &bull; Universitas Raharja</p>
+                            <div class="flex flex-wrap gap-2 text-[11px]">
+                                <a href="https://id.linkedin.com/in/ksucilestari97" target="_blank" rel="noopener noreferrer" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-200 transition font-medium flex items-center space-x-1">
+                                    <i class="fa-brands fa-linkedin text-indigo-600"></i>
+                                    <span>id.linkedin.com/in/ksucilestari97</span>
+                                </a>
+                                <a href="https://scholar.google.com/citations?user=zxQ6BcAAAAAJ" target="_blank" rel="noopener noreferrer" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-200 transition font-medium flex items-center space-x-1">
+                                    <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
+                                    <span>Scholar Karunia Suci Lestari</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grading Scheme Summary -->
+                    <div class="md:col-span-6 bg-slate-50 p-4 rounded-2xl border border-slate-200 grid grid-cols-3 gap-3 text-center">
+                        <div class="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                            <span class="block text-indigo-600 font-black text-lg font-heading">UI</span>
+                            <span class="text-[11px] font-semibold text-slate-600">Tampilan Visual</span>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Layout, Warna, Typography</p>
+                        </div>
+                        <div class="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                            <span class="block text-emerald-600 font-black text-lg font-heading">UX</span>
+                            <span class="text-[11px] font-semibold text-slate-600">Experience Apps</span>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Feedback, Performa</p>
+                        </div>
+                        <div class="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                            <span class="block text-cyan-600 font-black text-lg font-heading">Figma</span>
+                            <span class="text-[11px] font-semibold text-slate-600">Tools Prototype</span>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Wajib Untuk Project</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 2: ICE BREAKING GAME ================= -->
+        <div class="slide-card" id="slide-2">
+            <div class="top-gradient-bar"></div>
+            
+            <!-- Top Header Row -->
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm shadow-md">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </span>
+                    <h2 class="text-xl md:text-2xl font-black text-slate-900 font-heading tracking-tight">
+                        Ice Breaking Game: "Spot &amp; Fix The UI/UX Fail!"
+                    </h2>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 text-indigo-800 px-3.5 py-1.5 rounded-xl font-bold text-xs flex items-center space-x-1.5 shadow-sm">
+                    <i class="fa-solid fa-trophy text-amber-500"></i>
+                    <span>Skor Game: <span id="ice-score" class="text-indigo-600 font-extrabold text-sm">0</span> / 5</span>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-3">
+                Pilih opsi keputusan desain yang <strong class="text-slate-900 font-extrabold">PALING BENAR (Good UI/UX Practice)</strong> pada 5 tantangan berikut:
+            </p>
+
+            <!-- 5 Interactive Questions Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
+                
+                <!-- Soal 1 -->
+                <div class="bg-indigo-50/40 border border-indigo-100 rounded-2xl p-3 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-center justify-between text-[11px] font-bold mb-2">
+                            <span class="text-indigo-600 font-heading">Soal 1</span>
+                            <span id="ice-status-1" class="text-slate-400 text-[10px]">Belum</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                            <span class="text-rose-500"><i class="fa-solid fa-trash-can"></i></span> Destructive Action
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-tight mb-3">
+                            Warna tombol untuk aksi "Hapus Akun"?
+                        </p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button onclick="checkIceAnswer(1, 'A', false)" id="ice-btn-1-A" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            A. Hijau Terang
+                        </button>
+                        <button onclick="checkIceAnswer(1, 'B', true)" id="ice-btn-1-B" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            B. Merah Bahaya
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="bg-indigo-50/40 border border-indigo-100 rounded-2xl p-3 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-center justify-between text-[11px] font-bold mb-2">
+                            <span class="text-indigo-600 font-heading">Soal 2</span>
+                            <span id="ice-status-2" class="text-slate-400 text-[10px]">Belum</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                            <span class="text-amber-500"><i class="fa-solid fa-hand-pointer"></i></span> Thumb Zone
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-tight mb-3">
+                            Posisi terbaik tombol Checkout / Beli?
+                        </p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button onclick="checkIceAnswer(2, 'A', false)" id="ice-btn-2-A" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            A. Pojok Kiri Atas
+                        </button>
+                        <button onclick="checkIceAnswer(2, 'B', true)" id="ice-btn-2-B" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            B. Bottom Sticky Bar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="bg-indigo-50/40 border border-indigo-100 rounded-2xl p-3 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-center justify-between text-[11px] font-bold mb-2">
+                            <span class="text-indigo-600 font-heading">Soal 3</span>
+                            <span id="ice-status-3" class="text-slate-400 text-[10px]">Belum</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                            <span class="text-cyan-500"><i class="fa-solid fa-spinner"></i></span> Feedback State
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-tight mb-3">
+                            Saat tombol "Bayar" diklik &amp; proses?
+                        </p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button onclick="checkIceAnswer(3, 'A', false)" id="ice-btn-3-A" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            A. Diam tanpa respon
+                        </button>
+                        <button onclick="checkIceAnswer(3, 'B', true)" id="ice-btn-3-B" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            B. Spinner + Disable
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Soal 4 -->
+                <div class="bg-indigo-50/40 border border-indigo-100 rounded-2xl p-3 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-center justify-between text-[11px] font-bold mb-2">
+                            <span class="text-indigo-600 font-heading">Soal 4</span>
+                            <span id="ice-status-4" class="text-slate-400 text-[10px]">Belum</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                            <span class="text-purple-500"><i class="fa-solid fa-eye"></i></span> Visual Hierarchy
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-tight mb-3">
+                            Gaya teks Judul Produk vs Deskripsi?
+                        </p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button onclick="checkIceAnswer(4, 'A', true)" id="ice-btn-4-A" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            A. Lebih Besar &amp; Bold
+                        </button>
+                        <button onclick="checkIceAnswer(4, 'B', false)" id="ice-btn-4-B" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            B. Ukuran &amp; Gaya Sama
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Soal 5 -->
+                <div class="bg-indigo-50/40 border border-indigo-100 rounded-2xl p-3 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-center justify-between text-[11px] font-bold mb-2">
+                            <span class="text-indigo-600 font-heading">Soal 5</span>
+                            <span id="ice-status-5" class="text-slate-400 text-[10px]">Belum</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                            <span class="text-emerald-500"><i class="fa-solid fa-expand"></i></span> Tap Target Size
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-tight mb-3">
+                            Ukuran minimal area sentuh tombol HP?
+                        </p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button onclick="checkIceAnswer(5, 'A', false)" id="ice-btn-5-A" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            A. 15 &times; 15 px
+                        </button>
+                        <button onclick="checkIceAnswer(5, 'B', true)" id="ice-btn-5-B" class="w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700">
+                            B. Min. 48 &times; 48 dp
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Theoretical Summary Box -->
+            <div class="bg-slate-900 text-white rounded-2xl p-4 border border-slate-800 shadow-xl mt-auto">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-amber-400"><i class="fa-solid fa-book-open text-sm"></i></span>
+                        <h3 class="text-xs font-bold font-heading text-slate-100">Rangkuman Penjelasan Teori 5 Konsep UI/UX Di Atas:</h3>
+                    </div>
+                    <button onclick="resetIceGame()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold px-3 py-1 rounded-lg transition flex items-center space-x-1">
+                        <i class="fa-solid fa-rotate-right text-[10px]"></i>
+                        <span>Reset Game</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-2.5 text-[10px]">
+                    <!-- Card 1 -->
+                    <div class="bg-slate-950/80 p-2.5 rounded-xl border border-rose-900/50">
+                        <span class="text-rose-400 font-bold block mb-1">1. Destructive Actions</span>
+                        <p class="text-slate-300 leading-relaxed">
+                            Warna merah memberikan sinyal kewaspadaan tinggi agar pengguna tidak menghapus data secara tidak sengaja.
+                        </p>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="bg-slate-950/80 p-2.5 rounded-xl border border-amber-900/50">
+                        <span class="text-amber-400 font-bold block mb-1">2. Thumb Zone Reach</span>
+                        <p class="text-slate-300 leading-relaxed">
+                            Area bawah layar adalah zona paling alami dijangkau ibu jari saat memegang smartphone satu tangan.
+                        </p>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="bg-slate-950/80 p-2.5 rounded-xl border border-cyan-900/50">
+                        <span class="text-cyan-400 font-bold block mb-1">3. Feedback &amp; System State</span>
+                        <p class="text-slate-300 leading-relaxed">
+                            Indikator loading &amp; tombol ter-disable mencegah pengguna melakukan *double-submit* atau mengira aplikasi error.
+                        </p>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="bg-slate-950/80 p-2.5 rounded-xl border border-purple-900/50">
+                        <span class="text-purple-400 font-bold block mb-1">4. Visual Hierarchy</span>
+                        <p class="text-slate-300 leading-relaxed">
+                            Penggunaan ukuran font &amp; warna berbeda membantu pengguna memindai (*scanning*) informasi terpenting dengan cepat.
+                        </p>
+                    </div>
+                    <!-- Card 5 -->
+                    <div class="bg-slate-950/80 p-2.5 rounded-xl border border-emerald-900/50">
+                        <span class="text-emerald-400 font-bold block mb-1">5. Touch Target Size</span>
+                        <p class="text-slate-300 leading-relaxed">
+                            Standar WCAG &amp; Android menetapkan 48 &times; 48 dp agar tombol dapat ditekan secara akurat oleh rata-rata ukuran jari manusia.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= SLIDE 3: VIDEO VISUAL LEARNING ================= -->
+        <div class="slide-card" id="slide-3">
+            <div class="top-gradient-bar"></div>
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3 font-heading">
+                    <i class="fa-solid fa-circle-play text-red-600"></i> Visual Learning: Video Pengantar UI/UX &amp; Design Thinking
+                </h2>
+                <span class="text-xs font-bold bg-red-50 text-red-600 px-3 py-1 rounded-full border border-red-200">
+                    <i class="fa-brands fa-youtube mr-1"></i> Video Media Ajar
+                </span>
+            </div>
+            <p class="text-xs text-slate-600 mb-3">Simak penjelasan visual komprehensif dari dosen pengajar mengenai fondasi UI/UX &amp; Design Thinking:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 h-full">
+                <!-- Embedded Video Player / Frame -->
+                <div class="md:col-span-7 bg-slate-900 rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col justify-between">
+                    <div class="relative w-full aspect-video bg-slate-950 flex items-center justify-center">
+                        <iframe class="w-full h-full rounded-t-2xl" 
+                                src="https://www.youtube.com/embed/fqWRz9AncO0?rel=0" 
+                                title="Konsep UI/UX dan Design Thinking - Karunia Suci Lestari" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="p-3 bg-slate-900 text-white flex items-center justify-between text-xs">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-brands fa-youtube text-red-500 text-base"></i>
+                            <span class="font-bold">Konsep UI/UX &amp; Design Thinking</span>
+                        </div>
+                        <a href="https://www.youtube.com/watch?v=fqWRz9AncO0" target="_blank" rel="noopener noreferrer" class="bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg transition text-[11px] flex items-center space-x-1">
+                            <span>Buka di YouTube</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Video Key Takeaways & Focus Points -->
+                <div class="md:col-span-5 bg-gradient-to-br from-slate-50 to-indigo-50/50 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-indigo-900 font-bold mb-3">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+                            <h3 class="text-sm font-bold font-heading">Poin Kunci Pembelajaran Video</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-700">
+                            <li class="bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-sm flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-emerald-600 mt-0.5"></i>
+                                <span><strong>Pentingnya Mindset UI/UX:</strong> Mengapa aplikasi yang sukses harus berfokus pada masalah nyata manusia (*User Problem*).</span>
+                            </li>
+                            <li class="bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-sm flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-emerald-600 mt-0.5"></i>
+                                <span><strong>Filosofi Design Thinking:</strong> 5 Siklus perancangan produk interaktif berbasis empati.</span>
+                            </li>
+                            <li class="bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-sm flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-emerald-600 mt-0.5"></i>
+                                <span><strong>Simulasi Prototyping Figma:</strong> Gambaran umum eksekusi wireframe hingga high-fidelity design.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-indigo-600 text-white rounded-xl text-xs flex items-center justify-between">
+                        <span class="font-medium">Narsum / Speaker:</span>
+                        <span class="font-extrabold font-heading">Karunia Suci Lestari, S. Kom., M. TI.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 4: CAPAIAN PEMBELAJARAN & RULES ================= -->
+        <div class="slide-card" id="slide-4">
+            <div class="top-gradient-bar"></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3 font-heading">
+                    <i class="fa-solid fa-bullseye text-indigo-600"></i> Capaian Pembelajaran &amp; Aturan Perkuliahan
+                </h2>
+                <span class="text-xs font-semibold text-slate-400">FS313 &bull; 2 SKS (&plusmn;100 Menit)</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+                <!-- Sub-CPMK -->
+                <div class="bg-gradient-to-br from-indigo-50/70 via-white to-slate-50 border border-indigo-100 p-5 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-indigo-700 font-bold mb-3">
+                            <i class="fa-solid fa-graduation-cap text-lg"></i>
+                            <h3 class="text-base font-bold">Sub-CPMK Pertemuan 2</h3>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-3">
+                            Mahasiswa mampu menganalisis konsep UI/UX, prinsip desain modern (Material You, HIG), dan menerapkan Design Thinking Framework. <i>(C4, A3, P2) (CPL-3, CPL-4, CPL-5, CPMK-2)</i>
+                        </p>
+                        <ul class="space-y-2.5 text-xs text-slate-700">
+                            <li class="flex items-start space-x-2">
+                                <span class="bg-indigo-600 text-white font-bold rounded-md px-2 py-0.5 text-[10px] mt-0.5">1</span>
+                                <span><strong>Mengidentifikasi &amp; Membedakan</strong> aspek UI (visual/estetika) dan UX (pengalaman/efisiensi).</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <span class="bg-indigo-600 text-white font-bold rounded-md px-2 py-0.5 text-[10px] mt-0.5">2</span>
+                                <span><strong>Menerapkan Prinsip Desain Modern:</strong> Simplicity, Consistency, Feedback, Clarity, Accessibility.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <span class="bg-indigo-600 text-white font-bold rounded-md px-2 py-0.5 text-[10px] mt-0.5">3</span>
+                                <span><strong>Menguasai Tahapan Design Thinking:</strong> Empathize, Define, Ideate, Prototype, Test.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <span class="bg-indigo-600 text-white font-bold rounded-md px-2 py-0.5 text-[10px] mt-0.5">4</span>
+                                <span><strong>Mengevaluasi</strong> tools UI/UX (Figma, Adobe XD) dan studi kasus nyata aplikasi (WhatsApp, Gojek, Instagram, Shopee).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Rules & Assessment Details -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                    <div class="flex items-center space-x-2 text-slate-900 font-bold">
+                        <i class="fa-solid fa-clipboard-list text-indigo-600 text-lg"></i>
+                        <h3 class="text-base font-bold">Ketentuan &amp; Tata Tertib</h3>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-700">
+                        <div class="bg-white p-3 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-900 block mb-1"><i class="fa-solid fa-clock text-indigo-500 mr-1.5"></i> Presensi &amp; Kehadiran (15%) + Keaktifan (10%)</span>
+                            <p class="text-slate-600 leading-relaxed">Batas keterlambatan maksimal 30 menit. Izin memerlukan Surat Resmi, Sakit memerlukan Surat Dokter resmi.</p>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-900 block mb-1"><i class="fa-solid fa-diagram-project text-emerald-500 mr-1.5"></i> Tugas Mandiri &amp; Proyek Figma (75%)</span>
+                            <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                <span>Slide Presentasi Mandiri (10% - dikumpul max Pertemuan 4)</span>
+                                <span>Presentasi (15%)</span>
+                                <span>Proyek Prototype UI/UX Figma (30%: Desain 50%, Ideasi 25%, Fungsionalitas 25%)</span>
+                            </ul>
+                        </div>
+
+                        <div class="bg-indigo-50/80 p-3 rounded-xl border border-indigo-100 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-gamepad text-indigo-600 text-base"></i>
+                                <span class="font-bold text-indigo-900 text-xs">Game Quiz Interactive Code:</span>
+                            </div>
+                            <span class="bg-indigo-600 text-white font-mono font-black text-xs px-2.5 py-1 rounded-md">TUGUGHY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 5: DEFINISI & PERBEDAAN UI VS UX ================= -->
+        <div class="slide-card" id="slide-5">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-layer-group text-indigo-600"></i> Definisi &amp; Perbedaan Fundamental UI vs UX
+            </h2>
+            <p class="text-xs text-slate-600 mb-4">Pengembangan aplikasi mobile modern sangat ditentukan oleh kolaborasi harmonis antara tampilan antarmuka dan pengalaman pengguna.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- UI Definition Card -->
+                <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-2xl border border-indigo-100">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">UI</span>
+                        <h3 class="font-bold text-slate-900 text-sm">User Interface (UI)</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Antarmuka visual yang digunakan pengguna untuk berinteraksi dengan aplikasi. Mencakup elemen grafis seperti tata letak (layout), skema warna, tipografi, ikon, tombol, dan transisi.
+                    </p>
+                    <div class="mt-3 bg-white p-2.5 rounded-xl border border-indigo-100 text-[11px] text-indigo-900 font-medium">
+                        <strong>Fokus Utama UI:</strong> "Bagaimana aplikasi terlihat" (Estetika visual, kejelasan, &amp; konsistensi gaya).
+                    </div>
+                </div>
+
+                <!-- UX Definition Card -->
+                <div class="bg-gradient-to-br from-cyan-50 to-white p-4 rounded-2xl border border-cyan-100">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <span class="w-8 h-8 rounded-lg bg-cyan-600 text-white flex items-center justify-center font-bold text-sm">UX</span>
+                        <h3 class="font-bold text-slate-900 text-sm">User Experience (UX)</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Keseluruhan persepsi, kemudahan, efisiensi, dan kepuasan emosional yang dirasakan pengguna saat berinteraksi dan menyelesaikan tugas dalam aplikasi.
+                    </p>
+                    <div class="mt-3 bg-white p-2.5 rounded-xl border border-cyan-100 text-[11px] text-cyan-900 font-medium">
+                        <strong>Fokus Utama UX:</strong> "Bagaimana aplikasi dirasakan dan bekerja" (Alur interaksi, learnability, &amp; kenyamanan).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel 2.1 Perbedaan UI dan UX dari Bahan Ajar -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                        <tr>
+                            <th class="p-2.5 border-b">Aspek</th>
+                            <th class="p-2.5 border-b text-indigo-700">User Interface (UI)</th>
+                            <th class="p-2.5 border-b text-cyan-700">User Experience (UX)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700 bg-white">
+                        <tr>
+                            <td class="p-2.5 font-bold bg-slate-50">Fokus Utama</td>
+                            <td class="p-2.5">Tampilan visual &amp; daya tarik grafis</td>
+                            <td class="p-2.5">Pengalaman &amp; kemudahan penggunaan menyeluruh</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold bg-slate-50">Elemen Kunci</td>
+                            <td class="p-2.5">Warna, layout, tipografi, ikon, button</td>
+                            <td class="p-2.5">Alur penggunaan (User Flow), interaksi, emosi pengguna</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold bg-slate-50">Tujuan Desain</td>
+                            <td class="p-2.5">Membuat tampilan menarik (Estetika &amp; keterbacaan)</td>
+                            <td class="p-2.5">Membuat aplikasi mudah digunakan (Efisiensi &amp; kenyamanan)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold bg-slate-50">Contoh Masalah Utama</td>
+                            <td class="p-2.5 text-rose-600">Tombol tidak terlihat / kontras warna buruk</td>
+                            <td class="p-2.5 text-rose-600">Proses checkout terlalu rumit &amp; panjang</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 6: PRINSIP DESAIN MOBILE MODERN ================= -->
+        <div class="slide-card" id="slide-6">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Prinsip Desain Mobile Modern (Tabel 2.2)
+            </h2>
+            <p class="text-xs text-slate-600 mb-4">Aplikasi mobile modern yang sukses wajib mematuhi standar &amp; kriteria desain berikut:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 custom-scroll overflow-y-auto max-h-[460px] pr-1">
+                <!-- Simplicity -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">1</div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-xs">Kesederhanaan (Simplicity)</h3>
+                        <p class="text-[11px] text-slate-600 mt-0.5">"Less is More" &bull; Menghilangkan elemen visual berlebihan yang tidak perlu. Tampilan bersih dan fokus pada fungsi utama.</p>
+                        <span class="inline-block mt-1.5 text-[10px] bg-white text-indigo-700 px-2 py-0.5 rounded border border-slate-200 font-semibold">Contoh: Tampilan Halaman Login Minimalis</span>
+                    </div>
+                </div>
+
+                <!-- Consistency -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">2</div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-xs">Konsistensi (Consistency)</h3>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Penggunaan warna, ikon, tipografi, dan gaya tombol yang seragam di seluruh halaman layar aplikasi.</p>
+                        <span class="inline-block mt-1.5 text-[10px] bg-white text-indigo-700 px-2 py-0.5 rounded border border-slate-200 font-semibold">Contoh: Tombol "Submit" Selalu Biru di Setiap Screen</span>
+                    </div>
+                </div>
+
+                <!-- Feedback & Visibility -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">3</div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-xs">Umpan Balik &amp; Visibilitas (Feedback)</h3>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Sistem memberikan respons visual/suara/getaran langsung atas aksi pengguna agar user tahu proses sedang berlangsung.</p>
+                        <span class="inline-block mt-1.5 text-[10px] bg-white text-indigo-700 px-2 py-0.5 rounded border border-slate-200 font-semibold">Contoh: Animasi Klik, Spinner Loading Bar Transaksi</span>
+                    </div>
+                </div>
+
+                <!-- Accessibility -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">4</div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-xs">Aksesibilitas (Accessibility)</h3>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Ramah bagi semua kalangan pengguna termasuk disabilitas. Memenuhi kontras rasio minimal 4.5:1 dan dukungan Screen Reader.</p>
+                        <span class="inline-block mt-1.5 text-[10px] bg-white text-indigo-700 px-2 py-0.5 rounded border border-slate-200 font-semibold">Contoh: VoiceAssist, High Contrast Ratio, TalkBack/VoiceOver</span>
+                    </div>
+                </div>
+
+                <!-- Navigation & Cognitive Load -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">5</div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-xs">Navigasi Intuitif &amp; Don't Make Me Think</h3>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Pengguna dapat berpindah menu tanpa kebingungan. Meminimalisir beban kognitif dengan opsi yang jelas.</p>
+                        <span class="inline-block mt-1.5 text-[10px] bg-white text-indigo-700 px-2 py-0.5 rounded border border-slate-200 font-semibold">Contoh: Bottom Navigation Bar, Navigasi Max 3 Klik</span>
+                    </div>
+                </div>
+
+                <!-- Emotion & Personalization -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">6</div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-xs">Personalisasi &amp; Emotion Design</h3>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Menyesuaikan preferensi pengguna (tema gelap otomatis) dan menghadirkan emosi positif melalui animasi mikro lembut.</p>
+                        <span class="inline-block mt-1.5 text-[10px] bg-white text-indigo-700 px-2 py-0.5 rounded border border-slate-200 font-semibold">Contoh: Auto Dark Mode, Micro-interactions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 7: DESIGN THINKING FRAMEWORK ================= -->
+        <div class="slide-card" id="slide-7">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-brain text-indigo-600"></i> Design Thinking Framework (5 Tahapan Utama)
+            </h2>
+            <p class="text-xs text-slate-600 mb-5">Metodologi penyelesaian masalah berbasis empati untuk menghasilkan produk aplikasi mobile yang tepat sasaran.</p>
+
+            <!-- 5 Steps Horizontal Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 h-full">
+                <!-- 1. Empathize -->
+                <div class="bg-gradient-to-b from-indigo-50 to-white p-3.5 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center mb-2">1</div>
+                        <h3 class="font-extrabold text-slate-900 text-xs font-heading">Empathize</h3>
+                        <p class="text-[11px] font-bold text-indigo-700 mb-1">Pahami User</p>
+                        <p class="text-[10px] text-slate-600 leading-relaxed">
+                            Memahami pengguna, kebutuhan, kendala, dan emosinya.
+                        </p>
+                    </div>
+                    <div class="mt-3 bg-white p-2 rounded-xl border border-indigo-100 text-[9px] text-slate-500 font-medium">
+                        <strong>Metode:</strong> Wawancara, observasi langsung, survei.
+                    </div>
+                </div>
+
+                <!-- 2. Define -->
+                <div class="bg-gradient-to-b from-indigo-50 to-white p-3.5 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center mb-2">2</div>
+                        <h3 class="font-extrabold text-slate-900 text-xs font-heading">Define</h3>
+                        <p class="text-[11px] font-bold text-indigo-700 mb-1">Rumuskan Masalah</p>
+                        <p class="text-[10px] text-slate-600 leading-relaxed">
+                            Menyusun Problem Statement &amp; User Persona dari data empati.
+                        </p>
+                    </div>
+                    <div class="mt-3 bg-white p-2 rounded-xl border border-indigo-100 text-[9px] text-slate-500 font-medium">
+                        <strong>Output:</strong> "Bagaimana kita bisa membantu user mencapai X?"
+                    </div>
+                </div>
+
+                <!-- 3. Ideate -->
+                <div class="bg-gradient-to-b from-indigo-50 to-white p-3.5 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center mb-2">3</div>
+                        <h3 class="font-extrabold text-slate-900 text-xs font-heading">Ideate</h3>
+                        <p class="text-[11px] font-bold text-indigo-700 mb-1">Hasil Ide Solusi</p>
+                        <p class="text-[10px] text-slate-600 leading-relaxed">
+                            Eksplorasi sebanyak mungkin gagasan &amp; fitur inovatif.
+                        </p>
+                    </div>
+                    <div class="mt-3 bg-white p-2 rounded-xl border border-indigo-100 text-[9px] text-slate-500 font-medium">
+                        <strong>Metode:</strong> Brainstorming, mind mapping, Crazy 8s.
+                    </div>
+                </div>
+
+                <!-- 4. Prototype -->
+                <div class="bg-gradient-to-b from-indigo-50 to-white p-3.5 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center mb-2">4</div>
+                        <h3 class="font-extrabold text-slate-900 text-xs font-heading">Prototype</h3>
+                        <p class="text-[11px] font-bold text-indigo-700 mb-1">Buat Purwaprupa</p>
+                        <p class="text-[10px] text-slate-600 leading-relaxed">
+                            Merancang wireframe &amp; interactive prototype visual.
+                        </p>
+                    </div>
+                    <div class="mt-3 bg-white p-2 rounded-xl border border-indigo-100 text-[9px] text-slate-500 font-medium">
+                        <strong>Tools:</strong> Figma, Adobe XD, FlutterFlow.
+                    </div>
+                </div>
+
+                <!-- 5. Test -->
+                <div class="bg-gradient-to-b from-indigo-50 to-white p-3.5 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center mb-2">5</div>
+                        <h3 class="font-extrabold text-slate-900 text-xs font-heading">Test</h3>
+                        <p class="text-[11px] font-bold text-indigo-700 mb-1">Uji ke Pengguna</p>
+                        <p class="text-[10px] text-slate-600 leading-relaxed">
+                            Menguji desain langsung ke calon user untuk validasi.
+                        </p>
+                    </div>
+                    <div class="mt-3 bg-white p-2 rounded-xl border border-indigo-100 text-[9px] text-slate-500 font-medium">
+                        <strong>Metode:</strong> UAT (User Acceptance Testing), A/B Testing.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 8: FRAMEWORK DESAIN POPULER ================= -->
+        <div class="slide-card" id="slide-8">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-cubes text-indigo-600"></i> Framework Desain Mobile Populer
+            </h2>
+            <p class="text-xs text-slate-600 mb-4">Setiap sistem operasi dan ekosistem memiliki panduan resmi antarmuka yang menjadi acuan pengembang:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Material You -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-brands fa-android text-emerald-600 text-lg"></i>
+                            <h3 class="font-bold text-slate-900 text-sm">Material You (Android / Google)</h3>
+                        </div>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Google</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Sistem desain dinamis yang menyesuaikan skema warna secara otomatis berdasarkan wallpaper pengguna. Menekankan elevasi, sudut tumpul, serta respon gestur yang adaptif.
+                    </p>
+                </div>
+
+                <!-- HIG Apple -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-brands fa-apple text-slate-800 text-lg"></i>
+                            <h3 class="font-bold text-slate-900 text-sm">Human Interface Guidelines / HIG (iOS)</h3>
+                        </div>
+                        <span class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold">Apple</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Panduan iOS yang berfokus pada tiga asas utama: <strong>Clarity</strong> (keterbacaan teks), <strong>Deference</strong> (konten utama mendominasi), dan <strong>Depth</strong> (kedalaman visual alami &amp; gerakan reaktif).
+                    </p>
+                </div>
+
+                <!-- Fluent Design -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-brands fa-windows text-cyan-600 text-lg"></i>
+                            <h3 class="font-bold text-slate-900 text-sm">Fluent Design System</h3>
+                        </div>
+                        <span class="text-[10px] bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded font-bold">Microsoft</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Menekankan pada efek transparansi (acrylic material), pencahayaan realistis, animasi gerak halus, dan interaksi multi-perangkat yang mulus.
+                    </p>
+                </div>
+
+                <!-- Neumorphism & Glassmorphism -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-glass-water text-indigo-600 text-lg"></i>
+                            <h3 class="font-bold text-slate-900 text-sm">Neomorphism &amp; Glassmorphism</h3>
+                        </div>
+                        <span class="text-[10px] bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded font-bold">Modern Trend</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Estetika visual modern yang menggabungkan bayangan lembut (soft dual shadows) atau efek transparansi mirip kaca buram (*frosted glass effect*).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 9: TOOLS & TEKNOLOGI DESAIN UI/UX ================= -->
+        <div class="slide-card" id="slide-9">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-toolbox text-indigo-600"></i> Tools &amp; Ekosistem Teknologi UI/UX (2025)
+            </h2>
+            <p class="text-xs text-slate-600 mb-4">Pemilihan perangkat lunak desain yang tepat mempermudah kolaborasi tim dan pembuatan prototipe interaktif:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <!-- Figma -->
+                <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-brands fa-figma text-rose-500 text-xl"></i>
+                                <h3 class="font-black text-slate-900 text-sm">Figma</h3>
+                            </div>
+                            <span class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded">Rekomendasi Utama</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                            Aplikasi UI/UX berbasis cloud-web unggulan industri untuk perancangan real-time collaboration.
+                        </p>
+                        <ul class="text-[11px] text-slate-700 space-y-1">
+                            <li class="text-emerald-700"><i class="fa-solid fa-circle-check mr-1"></i>Gratis versi dasar, kolaborasi real-time.</li>
+                            <li class="text-rose-600"><i class="fa-solid fa-circle-xmark mr-1"></i>Butuh koneksi internet stabil.</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 text-[10px] bg-white p-2 rounded-lg border border-indigo-100 font-semibold text-indigo-900">
+                        Cocok untuk: Tugas kuliah, perkuliahan, &amp; prototyping cepat.
+                    </div>
+                </div>
+
+                <!-- Adobe XD -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <i class="fa-solid fa-pen-nib text-indigo-600 text-lg"></i>
+                            <h3 class="font-black text-slate-900 text-sm">Adobe XD</h3>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                            Mendukung wireframing &amp; prototyping interaktif terintegrasi Adobe Creative Cloud.
+                        </p>
+                        <ul class="text-[11px] text-slate-700 space-y-1">
+                            <li class="text-emerald-700"><i class="fa-solid fa-circle-check mr-1"></i>Integrasi baik dengan Photoshop/Illustrator.</li>
+                            <li class="text-rose-600"><i class="fa-solid fa-circle-xmark mr-1"></i>Kurang populer untuk kolaborasi tim.</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 text-[10px] bg-white p-2 rounded-lg border border-slate-200 font-semibold text-slate-700">
+                        Cocok untuk: Desainer ekosistem Adobe.
+                    </div>
+                </div>
+
+                <!-- Sketch & Canva -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <i class="fa-solid fa-gem text-amber-500 text-lg"></i>
+                            <h3 class="font-black text-slate-900 text-sm">Sketch &amp; Canva</h3>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                            <strong>Sketch:</strong> Standar industri lama (khusus macOS).<br>
+                            <strong>Canva:</strong> Cepat &amp; kaya template untuk pemula.
+                        </p>
+                    </div>
+                    <div class="mt-3 text-[10px] bg-white p-2 rounded-lg border border-slate-200 font-semibold text-slate-700">
+                        Pilihan pendukung perancangan cepat.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ekosistem Kategori Tools -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                <div class="p-2.5 bg-slate-100 rounded-xl">
+                    <span class="font-bold block text-slate-800 text-[11px]">Prototyping</span>
+                    <span class="text-slate-600 text-[10px]">ProtoPie, Framer, InVision, FlutterFlow</span>
+                </div>
+                <div class="p-2.5 bg-slate-100 rounded-xl">
+                    <span class="font-bold block text-slate-800 text-[11px]">Collaboration</span>
+                    <span class="text-slate-600 text-[10px]">FigJam, Miro, Notion</span>
+                </div>
+                <div class="p-2.5 bg-slate-100 rounded-xl">
+                    <span class="font-bold block text-slate-800 text-[11px]">Testing &amp; Feedback</span>
+                    <span class="text-slate-600 text-[10px]">Maze, UserTesting, PlaybookUX</span>
+                </div>
+                <div class="p-2.5 bg-slate-100 rounded-xl">
+                    <span class="font-bold block text-slate-800 text-[11px]">Best Practice 2025</span>
+                    <span class="text-slate-600 text-[10px]">Grid 60-30-10, Contrast 4.5:1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 10: STUDI KASUS APLIKASI POPULER ================= -->
+        <div class="slide-card" id="slide-10">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-mobile-screen-button text-indigo-600"></i> Studi Kasus Penerapan UI/UX Aplikasi Populer
+            </h2>
+            <p class="text-xs text-slate-600 mb-4">Analisis bagaimana aplikasi skala besar menyeimbangkan estetika UI dan efisiensi UX:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- WhatsApp -->
+                <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-slate-900 text-sm font-heading">WhatsApp</h3>
+                            <span class="text-[10px] text-emerald-700 font-bold">Simple &amp; Fast Messaging</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-700">
+                        <li class="bg-white p-2 rounded-lg border border-emerald-100">
+                            <strong>UI:</strong> Sangat sederhana (skema hijau &amp; putih, ikon pesan jernih).
+                        </li>
+                        <li class="bg-white p-2 rounded-lg border border-emerald-100">
+                            <strong>UX:</strong> Luar biasa mudah digunakan. Navigasi jelas (Chat - Status - Panggilan) dengan beban kognitif sangat rendah.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Gojek -->
+                <div class="bg-emerald-50/30 p-4 rounded-2xl border border-emerald-200">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-slate-900 text-sm font-heading">Gojek</h3>
+                            <span class="text-[10px] text-emerald-800 font-bold">SuperApp On-Demand</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-700">
+                        <li class="bg-white p-2 rounded-lg border border-slate-200">
+                            <strong>UI:</strong> Grid ikon warna-warni yang intuitif serta pengelompokan kategori layanan.
+                        </li>
+                        <li class="bg-white p-2 rounded-lg border border-slate-200">
+                            <strong>UX:</strong> Alur pemesanan sangat terfokus (Pilih Layanan &rarr; Pilih Tujuan &rarr; Bayar).
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Instagram -->
+                <div class="bg-rose-50/50 p-4 rounded-2xl border border-rose-100">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-slate-900 text-sm font-heading">Instagram</h3>
+                            <span class="text-[10px] text-rose-700 font-bold">Visual Social Media</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-700">
+                        <li class="bg-white p-2 rounded-lg border border-rose-100">
+                            <strong>UI:</strong> Konsisten &amp; minimalis (latar netral memfokuskan mata pada gambar/video).
+                        </li>
+                        <li class="bg-white p-2 rounded-lg border border-rose-100">
+                            <strong>UX:</strong> Infinite scroll tanpa batas, interaksi gestur cepat (double tap like, swipe stories).
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 11: AKTIVITAS KELOMPOK & TUGAS MANDIRI ================= -->
+        <div class="slide-card" id="slide-11">
+            <div class="top-gradient-bar"></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 flex items-center gap-3 font-heading">
+                <i class="fa-solid fa-users-viewfinder text-indigo-600"></i> Aktivitas Belajar Kelas &amp; Penugasan
+            </h2>
+            <p class="text-xs text-slate-600 mb-4">Latihan praktis analisis kritis antarmuka aplikasi untuk menguji pemahaman teori:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Aktivitas Belajar Kelompok (25 Menit) -->
+                <div class="bg-indigo-50/70 p-5 rounded-2xl border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-indigo-600 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded">Diskusi Kelompok (25 Menit)</span>
+                            <span class="text-xs text-indigo-900 font-bold"><i class="fa-solid fa-stopwatch mr-1"></i>1-Min Pitch</span>
+                        </div>
+                        <h3 class="font-black text-slate-900 text-sm mb-2">Instruksi Analisis UI/UX Aplikasi</h3>
+                        <ol class="list-decimal list-inside text-xs text-slate-700 space-y-2">
+                            <li>Bentuk kelompok berisi 3-4 mahasiswa.</li>
+                            <li>Pilih 1 aplikasi mobile pilihan harian (Shopee, YouTube, Gojek, TikTok, dll.).</li>
+                            <li><strong>Analisis Sisi UI:</strong> Sederhana/kompleks? Pemilihan warna, tombol, tipografi seragam?</li>
+                            <li><strong>Analisis Sisi UX:</strong> Apakah alur penggunaan (user flow) terasa mudah atau berbelit-belit?</li>
+                            <li><strong>Satu Usulan Perbaikan:</strong> Elemen apa yang wajib diperbaiki?</li>
+                        </ol>
+                    </div>
+                    <div class="mt-4 p-2.5 bg-white rounded-xl border border-indigo-100 text-[11px] text-indigo-900 font-bold">
+                        Presentasikan poin analisis singkat selama 1 menit per kelompok di depan kelas!
+                    </div>
+                </div>
+
+                <!-- Tugas Mandiri (1 Halaman PDF) -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-slate-800 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded">Tugas Mandiri (Individu)</span>
+                            <span class="text-xs text-slate-500 font-bold"><i class="fa-solid fa-file-pdf mr-1"></i>Format PDF</span>
+                        </div>
+                        <h3 class="font-black text-slate-900 text-sm mb-2">Laporan Analisis Ringkas (1 Halaman)</h3>
+                        <p class="text-xs text-slate-600 mb-2">Buat laporan analisis ringkas mengenai 1 aplikasi mobile pilihan Anda dengan sistematika:</p>
+                        <ul class="list-disc list-inside text-xs text-slate-700 space-y-1.5">
+                            <span>Nama aplikasi &amp; Target penggunanya.</span>
+                            <span>Elemen UI yang paling menonjol.</span>
+                            <span>Evaluasi UX (mudah/sulit, nyaman/tidak).</span>
+                            <span>Saran perbaikan desain antarmuka.</span>
+                        </ul>
+                    </div>
+                    <div class="mt-4 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-900 font-semibold">
+                        Pengumpulan: Sebelum Pertemuan 3 dimulai via iDu Raharja / WA / Email pengajar.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 12: SESI DISKUSI & TANYA JAWAB (MATCHING SPEC IMAGE) ================= -->
+        <div class="slide-card" id="slide-12">
+            <div class="top-gradient-bar"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-full items-center my-auto">
+                <!-- Left Lecturer Card (Exact layout from image) -->
+                <div class="md:col-span-5 bg-slate-50/80 p-6 rounded-3xl border border-slate-200/80 shadow-md flex flex-col items-center text-center justify-center">
+                    <!-- Avatar with Indigo Ring -->
+                    <div class="relative mb-4">
+                        <img src="https://scholar.googleusercontent.com/citations?view_op=view_photo&user=zxQ6BcAAAAAJ&citpid=7" 
+                             alt="Karunia Suci Lestari" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/160x160/4f46e5/ffffff?text=KSL';" 
+                             class="w-32 h-32 rounded-full object-cover border-4 border-indigo-600 shadow-lg p-0.5 bg-white">
+                    </div>
+
+                    <h3 class="text-xl font-extrabold text-slate-900 font-heading mb-1">
+                        Karunia Suci Lestari, S. Kom., M. TI.
+                    </h3>
+                    <p class="text-xs font-bold text-indigo-700 uppercase tracking-wide">Dosen &amp; Founder</p>
+                    <p class="text-xs text-slate-600 font-medium mb-5">The Sign.Co</p>
+
+                    <!-- Social / Scholar Links Buttons -->
+                    <div class="w-full space-y-2.5">
+                        <a href="https://id.linkedin.com/in/ksucilestari97" target="_blank" rel="noopener noreferrer" class="w-full bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 py-2 px-3 rounded-full text-xs font-semibold border border-indigo-200/70 transition flex items-center justify-center space-x-2">
+                            <i class="fa-brands fa-linkedin text-indigo-600 text-sm"></i>
+                            <span class="truncate">id.linkedin.com/in/ksucilestari97</span>
+                        </a>
+
+                        <a href="https://scholar.google.com/citations?user=zxQ6BcAAAAAJ" target="_blank" rel="noopener noreferrer" class="w-full bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 py-2 px-3 rounded-full text-xs font-semibold border border-indigo-200/70 transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-graduation-cap text-indigo-600 text-sm"></i>
+                            <span>Scholar Karunia Suci Lestari</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Q&A Section -->
+                <div class="md:col-span-7 flex flex-col justify-between h-full py-2">
+                    <div>
+                        <!-- Pill Badge -->
+                        <div class="inline-flex items-center space-x-2 bg-indigo-100/70 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold mb-4 border border-indigo-200/60">
+                            <i class="fa-solid fa-comments text-indigo-600"></i>
+                            <span>Sesi Diskusi &amp; Tanya Jawab</span>
+                        </div>
+
+                        <!-- Main Heading -->
+                        <h2 class="text-3xl md:text-5xl font-black text-slate-900 font-heading leading-tight mb-6 tracking-tight">
+                            Ada Pertanyaan atau Pendapat?
+                        </h2>
+
+                        <!-- Quote Card -->
+                        <div class="bg-indigo-50/50 border-l-4 border-indigo-600 p-5 rounded-r-2xl mb-6 shadow-sm">
+                            <blockquote class="text-sm md:text-base font-medium italic text-slate-700 leading-relaxed mb-2">
+                                &ldquo;Design is not just what it looks like and feels like. Design is how it works.&rdquo;
+                            </blockquote>
+                            <cite class="text-xs font-bold text-indigo-700 not-italic block font-heading">
+                                &mdash; Steve Jobs
+                            </cite>
+                        </div>
+                    </div>
+
+                    <!-- Next Week Topic Card (Matching Dark Navy Reference) -->
+                    <div class="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between space-x-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-amber-400 text-2xl pt-0.5">
+                                <i class="fa-regular fa-calendar-days"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-cyan-400 font-heading uppercase tracking-wide">
+                                    Materi Minggu Depan (Pertemuan 3):
+                                </h4>
+                                <p class="text-xs sm:text-sm font-extrabold text-slate-100 mt-0.5 font-heading">
+                                    Wireframing Interaktif &amp; Implementasi Design System di Figma.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Quick Test CTA -->
+                        <button onclick="toggleQuizModal()" class="shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-md flex items-center space-x-1.5">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                            <span class="hidden sm:inline">Tes Formatif</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- BOTTOM SLIDE FOOTER NAVIGATION -->
+    <footer class="w-full max-w-[1280px] flex items-center justify-between text-white py-2.5 px-6 bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-800 shadow-xl z-30 mt-2">
+        <button onclick="prevSlide()" id="btn-prev" class="text-xs bg-slate-800 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl border border-slate-700 transition flex items-center space-x-2 font-bold disabled:opacity-40 disabled:pointer-events-none">
+            <i class="fa-solid fa-chevron-left"></i>
+            <span>Sebelumnya</span>
+        </button>
+
+        <div class="text-center hidden md:block">
+            <span class="text-[11px] text-slate-400">Gunakan tombol panah keyboard <kbd class="bg-slate-800 px-1.5 py-0.5 rounded text-indigo-300 font-mono text-[10px]">&larr;</kbd> <kbd class="bg-slate-800 px-1.5 py-0.5 rounded text-indigo-300 font-mono text-[10px]">&rarr;</kbd> untuk navigasi slide</span>
+        </div>
+
+        <button onclick="nextSlide()" id="btn-next" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl transition flex items-center space-x-2 font-bold shadow-md shadow-indigo-900/30">
+            <span>Selanjutnya</span>
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+
+</div>
+
+<!-- ================= TABLE OF CONTENTS MODAL ================= -->
+<div id="toc-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white text-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-list-ul text-indigo-400"></i>
+                <h3 class="font-extrabold text-sm font-heading">Daftar Slide Presentasi Meeting 2</h3>
+            </div>
+            <button onclick="toggleTocModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div class="p-4 custom-scroll overflow-y-auto space-y-2 text-xs">
+            <button onclick="goToSlide(1)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>1. Cover, Judul &amp; Profil Pengajar (Karunia Suci Lestari)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(2)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between font-bold text-indigo-600">
+                <span>2. Ice Breaking Game: "Spot &amp; Fix The UI/UX Fail!"</span>
+                <i class="fa-solid fa-chevron-right text-indigo-500"></i>
+            </button>
+            <button onclick="goToSlide(3)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between font-bold text-red-600">
+                <span>3. Video Visual Learning (Konsep UI/UX &amp; Design Thinking)</span>
+                <i class="fa-solid fa-chevron-right text-red-500"></i>
+            </button>
+            <button onclick="goToSlide(4)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>4. Sub-CPMK &amp; Aturan Perkuliahan / Bobot Penilaian</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(5)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>5. Definisi &amp; Perbedaan Fundamental UI vs UX (Tabel 2.1)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(6)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>6. Prinsip Desain Mobile Modern (Tabel 2.2)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(7)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>7. Tahapan Perancangan Desain (Design Thinking Framework)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(8)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>8. Framework Desain Populer (Material You, HIG, Fluent, Neumorphism)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(9)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>9. Tools &amp; Teknologi Pendukung Desain UI/UX (Figma, XD, dll)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(10)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>10. Studi Kasus Aplikasi Populer (WhatsApp, Gojek, Instagram)</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(11)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between">
+                <span>11. Aktivitas Diskusi Kelompok &amp; Penugasan Laporan Mandiri</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+            </button>
+            <button onclick="goToSlide(12)" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 transition font-medium flex items-center justify-between font-bold text-indigo-600">
+                <span>12. Sesi Diskusi &amp; Tanya Jawab / Penutup (Steve Jobs Quote)</span>
+                <i class="fa-solid fa-chevron-right text-indigo-500"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TES FORMATIF 10 SOAL MODAL (5 MUDAH + 5 HOTS) ================= -->
+<div id="quiz-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-5">
+    <div class="bg-white text-slate-900 w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[90vh]">
+        <!-- Header -->
+        <div class="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm font-heading">Tes Formatif Bahan Ajar (10 Soal: 5 Dasar + 5 HOTS)</h3>
+                    <p class="text-[11px] text-slate-400">Lengkap Kunci Jawaban &amp; Pembahasan Resmi Bahan Ajar Meeting 2</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 font-mono">Skor: <span id="quiz-score-display" class="text-emerald-400 font-bold">0</span> / 10</span>
+                <button onclick="toggleQuizModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+        </div>
+
+        <!-- Quiz Questions Scroll Body -->
+        <div class="p-5 custom-scroll overflow-y-auto flex-1 space-y-5" id="quiz-questions-container">
+            <!-- Dynamically populated via JavaScript -->
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+            <button onclick="resetQuiz()" class="text-xs text-rose-600 hover:text-rose-700 font-bold flex items-center space-x-1">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Reset Jawaban</span>
+            </button>
+            <button onclick="toggleQuizModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2 rounded-xl transition">
+                Selesai &amp; Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // State variables
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    // Ice Breaking Game State
+    let iceUserAnswers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+
+    function checkIceAnswer(qNum, choice, isCorrect) {
+        if (iceUserAnswers[qNum] !== null) return;
+        iceUserAnswers[qNum] = isCorrect;
+
+        const btnA = document.getElementById(`ice-btn-${qNum}-A`);
+        const btnB = document.getElementById(`ice-btn-${qNum}-B`);
+        const statusPill = document.getElementById(`ice-status-${qNum}`);
+
+        if (choice === 'A') {
+            if (isCorrect) {
+                btnA.className = "w-full text-left p-2 text-[11px] font-bold bg-emerald-100 border border-emerald-400 text-emerald-900 rounded-xl";
+            } else {
+                btnA.className = "w-full text-left p-2 text-[11px] font-bold bg-rose-100 border border-rose-400 text-rose-900 rounded-xl";
+            }
+        } else {
+            if (isCorrect) {
+                btnB.className = "w-full text-left p-2 text-[11px] font-bold bg-emerald-100 border border-emerald-400 text-emerald-900 rounded-xl";
+            } else {
+                btnB.className = "w-full text-left p-2 text-[11px] font-bold bg-rose-100 border border-rose-400 text-rose-900 rounded-xl";
+            }
+        }
+
+        if (isCorrect) {
+            statusPill.innerHTML = `<span class="bg-emerald-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded">Benar</span>`;
+        } else {
+            statusPill.innerHTML = `<span class="bg-rose-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded">Salah</span>`;
+        }
+
+        btnA.disabled = true;
+        btnB.disabled = true;
+
+        let score = 0;
+        Object.values(iceUserAnswers).forEach(val => {
+            if (val === true) score++;
+        });
+        document.getElementById('ice-score').innerText = score;
+    }
+
+    function resetIceGame() {
+        iceUserAnswers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+        document.getElementById('ice-score').innerText = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            const btnA = document.getElementById(`ice-btn-${i}-A`);
+            const btnB = document.getElementById(`ice-btn-${i}-B`);
+            const statusPill = document.getElementById(`ice-status-${i}`);
+
+            btnA.disabled = false;
+            btnB.disabled = false;
+            btnA.className = "w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700";
+            btnB.className = "w-full text-left p-2 text-[11px] font-medium bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700";
+            statusPill.className = "text-slate-400 text-[10px]";
+            statusPill.innerText = "Belum";
+        }
+    }
+    
+    // Quiz Questions Data (10 questions: 5 Easy + 5 HOTS)
+    const quizData = [
+        { 
+            q: "1. [DASAR] User Interface (UI) pada aplikasi mobile terutama berfokus pada ...", 
+            type: "Dasar",
+            options: [
+                "A. Alur transaksi database server", 
+                "B. Elemen visual seperti warna, layout, ikon, dan tipografi", 
+                "C. Kecepatan koneksi internet", 
+                "D. Algoritma enkripsi data", 
+                "E. Spesifikasi prosesor smartphone"
+            ], 
+            ans: 1,
+            explain: "UI berfokus pada aspek estetika dan komunikasi visual antarmuka kepada pengguna."
+        },
+        { 
+            q: "2. [DASAR] User Experience (UX) mengukur aspek ...", 
+            type: "Dasar",
+            options: [
+                "A. Keindahan skema warna banner", 
+                "B. Kenyamanan, efisiensi, dan kepuasan pengguna saat menggunakan aplikasi", 
+                "C. Banyaknya jumlah iklan pop-up", 
+                "D. Ukuran berkas instalasi APK", 
+                "E. Jumlah baris kode program backend"
+            ], 
+            ans: 1,
+            explain: "UX berfokus pada kemudahan dan pengalaman emosional pengguna saat menyelesaikan tugas."
+        },
+        { 
+            q: "3. [DASAR] Penerapan prinsip 'Consistency' dalam desain antarmuka aplikasi berarti ...", 
+            type: "Dasar",
+            options: [
+                "A. Menggunakan warna tombol, ukuran font, dan tata letak yang seragam di seluruh halaman", 
+                "B. Mengubah posisi tombol utama di setiap halaman", 
+                "C. Menampilkan warna acak tanpa standar", 
+                "D. Menyembunyikan seluruh menu navigasi", 
+                "E. Menghapus respon tombol"
+            ], 
+            ans: 0,
+            explain: "Konsistensi memudahkan pengguna memahami pola interaksi aplikasi tanpa harus belajar ulang."
+        },
+        { 
+            q: "4. [DASAR] Tahap pertama dalam metodologi Design Thinking adalah ...", 
+            type: "Dasar",
+            options: [
+                "A. Prototype", 
+                "B. Test", 
+                "C. Empathize (Memahami kebutuhan & kendala pengguna)", 
+                "D. Define", 
+                "E. Ideate"
+            ], 
+            ans: 2,
+            explain: "Empathize adalah langkah awal untuk mengamati dan merasakan langsung masalah pengguna."
+        },
+        { 
+            q: "5. [DASAR] Standar minimal area sentuh (Touch Target Size) tombol smartphone menurut WCAG & Google Material Design adalah ...", 
+            type: "Dasar",
+            options: [
+                "A. 10 × 10 px", 
+                "B. 20 × 20 px", 
+                "C. 48 × 48 dp", 
+                "D. 100 × 100 dp", 
+                "E. 5 × 5 px"
+            ], 
+            ans: 2,
+            explain: "Ukuran 48 × 48 dp direkomendasikan agar tombol mudah dan akurat ditekan oleh ukuran jari manusia."
+        },
+        { 
+            q: "6. [HOTS - Analisis Hierarchy] Sebuah aplikasi e-commerce mengalami penurunan transaksi sebesar 40%. Hasil evaluasi menunjukkan pengguna salah menekan tombol karena tombol 'Bayar Sekarang' memiliki ukuran dan warna yang sama persis dengan tombol 'Batal'. Solusi UI/UX yang tepat adalah ...", 
+            type: "HOTS",
+            options: [
+                "A. Mengubah tombol 'Bayar Sekarang' menjadi Primary Button (Kontras & Menonjol) dan 'Batal' menjadi Secondary/Outlined Button", 
+                "B. Menghapus tombol 'Batal' secara permanen dari layar", 
+                "C. Memperbesar ukuran semua font menjadi 30pt", 
+                "D. Menampilkan konfirmasi popup sebanyak 5 kali", 
+                "E. Mengubah warna latar aplikasi menjadi hitam pekat"
+            ], 
+            ans: 0,
+            explain: "Visual Hierarchy menentukan tingkatan fokus mata pengguna. Aksi utama wajib dibuat lebih kontras dibanding aksi sekunder."
+        },
+        { 
+            q: "7. [HOTS - Design Thinking] Tim pengembang mendapati pengguna lansia kesulitan membaca teks resep obat pada aplikasi kesehatan. Berdasarkan siklus Design Thinking, langkah logis yang tepat dari Empathize menuju solusi adalah ...", 
+            type: "HOTS",
+            options: [
+                "A. Langsung melakukan koding tanpa membuat wireframe", 
+                "B. Mengidentifikasi kendala kontras (Define), merancang opsi font besar & voice assistant (Ideate), lalu membuat wireframe interaktif (Prototype)", 
+                "C. Mengabaikan masukan lansia dan memfokuskan aplikasi pada remaja", 
+                "D. Menghentikan pengembangan aplikasi", 
+                "E. Mengganti jenis aplikasi menjadi game interaktif"
+            ], 
+            ans: 1,
+            explain: "Proses Design Thinking bersifat terstruktur: Empathize &rarr; Define &rarr; Ideate &rarr; Prototype &rarr; Test."
+        },
+        { 
+            q: "8. [HOTS - Feedback State] Saat menekan tombol 'Kirim Transfer' pada m-banking, layar tidak memberi respon visual apapun selama 4 detik sehingga pengguna menekan tombol 3 kali berturut-turut. Kegagalan prinsip apakah ini beserta dampaknya?", 
+            type: "HOTS",
+            options: [
+                "A. Kegagalan Accessibility; dampaknya aplikasi terhapus otomatis", 
+                "B. Kegagalan Feedback / System Status; dampaknya memicu transaksi ganda (duplicate submission) & kecemasan pengguna", 
+                "C. Kegagalan Material Design; dampaknya smartphone overheat", 
+                "D. Kegagalan Color Theory; dampaknya layar berkedip", 
+                "E. Kegagalan Typography; dampaknya teks tidak terbaca"
+            ], 
+            ans: 1,
+            explain: "System Status/Feedback (seperti loading spinner & disable button) sangat penting untuk memberi tahu user bahwa proses sedang berjalan."
+        },
+        { 
+            q: "9. [HOTS - Ergonomis Mobile] Aplikasi ride-hailing memindahkan tombol utama 'Pesan Driver' dari bagian bawah layar (bottom bar) ke sudut paling atas layar. Mengapa perubahan ini dinilai menurunkan UX secara signifikan?", 
+            type: "HOTS",
+            options: [
+                "A. Karena sudut atas layar berada di luar jangkauan alami ibu jari (Thumb Zone) saat memegang HP satu tangan", 
+                "B. Karena area atas layar tidak bisa menerima masukan sentuhan", 
+                "C. Karena sudut atas hanya diperuntukkan bagi iklan", 
+                "D. Karena warna tombol atas otomatis menjadi transparan", 
+                "E. Karena OS Android melarang tombol diletakkan di atas"
+            ], 
+            ans: 0,
+            explain: "Thumb Zone mobile menetapkan bahwa area bawah layar adalah area yang paling nyaman dijangkau jempol satu tangan."
+        },
+        { 
+            q: "10. [HOTS - Mental Model] Desainer merancang aplikasi iOS dengan komponen tombol yang sepenuhnya meniru antarmuka Android Material You. Mengapa pendekatan ini berpotensi membingungkan pengguna iOS?", 
+            type: "HOTS",
+            options: [
+                "A. Karena melanggar pola mental (mental model) pengguna iOS yang terbiasa dengan panduan Human Interface Guidelines (HIG) Apple", 
+                "B. Karena aplikasi tidak akan bisa diunggah ke Google Play Store", 
+                "C. Karena iOS tidak mendukung skema warna bertumpuk", 
+                "D. Karena pengguna iPhone tidak pernah menggunakan tombol sentuh", 
+                "E. Karena Apple melarang aplikasi memiliki tombol berbentuk persegi"
+            ], 
+            ans: 0,
+            explain: "Pengguna terbiasa dengan pola interaksi (mental model) bawaan OS masing-masing (HIG untuk iOS, Material Design untuk Android)."
+        }
+    ];
+
+    let userAnswers = new Array(quizData.length).fill(null);
+
+    // Slide Navigation Functions
+    function updateSlideView() {
+        document.querySelectorAll('.slide-card').forEach((card, idx) => {
+            if (idx + 1 === currentSlide) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+
+        document.getElementById('current-slide-num').innerText = currentSlide;
+        document.getElementById('total-slides-num').innerText = totalSlides;
+        
+        const progressPct = (currentSlide / totalSlides) * 100;
+        document.getElementById('progress-bar-inner').style.width = `${progressPct}%`;
+
+        document.getElementById('btn-prev').disabled = (currentSlide === 1);
+        
+        if (currentSlide === totalSlides) {
+            document.getElementById('btn-next').innerHTML = `<span>Selesai</span> <i class="fa-solid fa-check"></i>`;
+        } else {
+            document.getElementById('btn-next').innerHTML = `<span>Selanjutnya</span> <i class="fa-solid fa-chevron-right"></i>`;
+        }
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            updateSlideView();
+        } else {
+            toggleQuizModal();
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) {
+            currentSlide--;
+            updateSlideView();
+        }
+    }
+
+    function goToSlide(slideNum) {
+        currentSlide = slideNum;
+        updateSlideView();
+        toggleTocModal();
+    }
+
+    function toggleTocModal() {
+        const modal = document.getElementById('toc-modal');
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+
+    function toggleQuizModal() {
+        const modal = document.getElementById('quiz-modal');
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+
+    // Render Quiz Questions
+    function renderQuiz() {
+        const container = document.getElementById('quiz-questions-container');
+        container.innerHTML = '';
+
+        quizData.forEach((qObj, idx) => {
+            const card = document.createElement('div');
+            card.className = "bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 shadow-sm";
+
+            let optionsHTML = '';
+            qObj.options.forEach((opt, optIdx) => {
+                const isSelected = userAnswers[idx] === optIdx;
+                const isCorrect = qObj.ans === optIdx;
+                let btnStyle = "bg-white text-slate-800 border-slate-200 hover:bg-slate-100";
+
+                if (userAnswers[idx] !== null) {
+                    if (isCorrect) {
+                        btnStyle = "bg-emerald-100 text-emerald-900 border-emerald-400 font-bold";
+                    } else if (isSelected && !isCorrect) {
+                        btnStyle = "bg-rose-100 text-rose-900 border-rose-400";
+                    }
+                }
+
+                optionsHTML += `
+                    <button onclick="selectQuizAnswer(${idx}, ${optIdx})" 
+                            class="w-full text-left p-2.5 rounded-lg border text-xs transition flex items-center justify-between ${btnStyle}">
+                        <span>${opt}</span>
+                        ${userAnswers[idx] !== null && isCorrect ? '<i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>' : ''}
+                        ${userAnswers[idx] !== null && isSelected && !isCorrect ? '<i class="fa-solid fa-circle-xmark text-rose-600 text-sm"></i>' : ''}
+                    </button>
+                `;
+            });
+
+            const typeBadge = qObj.type === 'HOTS' 
+                ? '<span class="bg-purple-100 text-purple-800 border border-purple-200 text-[9px] font-black px-2 py-0.5 rounded uppercase">Soal HOTS</span>'
+                : '<span class="bg-indigo-100 text-indigo-800 border border-indigo-200 text-[9px] font-black px-2 py-0.5 rounded uppercase">Soal Dasar</span>';
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-2">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            ${typeBadge}
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-xs leading-relaxed">${qObj.q}</h4>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${userAnswers[idx] === null ? 'bg-slate-200 text-slate-600' : (userAnswers[idx] === qObj.ans ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white')}">
+                        ${userAnswers[idx] === null ? 'Belum dijawab' : (userAnswers[idx] === qObj.ans ? 'Benar' : 'Salah')}
+                    </span>
+                </div>
+                <div class="space-y-1.5">
+                    ${optionsHTML}
+                </div>
+                ${userAnswers[idx] !== null ? `
+                    <div class="mt-2 p-2.5 bg-indigo-50/70 border border-indigo-100 rounded-lg text-[11px] text-indigo-950 leading-relaxed">
+                        <strong>💡 Pembahasan:</strong> ${qObj.explain}
+                    </div>
+                ` : ''}
+            `;
+            container.appendChild(card);
+        });
+
+        calculateQuizScore();
+    }
+
+    function selectQuizAnswer(qIdx, optIdx) {
+        userAnswers[qIdx] = optIdx;
+        renderQuiz();
+    }
+
+    function calculateQuizScore() {
+        let score = 0;
+        userAnswers.forEach((ans, idx) => {
+            if (ans === quizData[idx].ans) score++;
+        });
+        document.getElementById('quiz-score-display').innerText = score;
+    }
+
+    function resetQuiz() {
+        userAnswers = new Array(quizData.length).fill(null);
+        renderQuiz();
+    }
+
+    // Keyboard Shortcuts Navigation
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowRight' || event.key === ' ') {
+            nextSlide();
+        } else if (event.key === 'ArrowLeft') {
+            prevSlide();
+        } else if (event.key === 'Escape') {
+            document.getElementById('toc-modal').classList.add('hidden');
+            document.getElementById('toc-modal').classList.remove('flex');
+            document.getElementById('quiz-modal').classList.add('hidden');
+            document.getElementById('quiz-modal').classList.remove('flex');
+        }
+    });
+
+    // Initialize on load
+    window.onload = function() {
+        updateSlideView();
+        renderQuiz();
+    };
+</script>
+
+</body>
+</html>
